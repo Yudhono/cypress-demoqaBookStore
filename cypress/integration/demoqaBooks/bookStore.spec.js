@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-// declare variable that contain fixture
+// declare variable that contain search keyword fixture
 const availableFixtures = [
     {
         "name": "searchKeyword",
@@ -50,8 +50,9 @@ const loginScenarioFixtures = [
 describe('Book Store Test Case', () => {
     let userDetails;
     let theData;
-    let theDatanya;
+    
 
+    // in this block, the code is always executed before all is executed
     beforeEach(() => {
         cy.visit('https://demoqa.com/books');
         cy.fixture('userLoginDetails').then((user) => {
@@ -61,7 +62,7 @@ describe('Book Store Test Case', () => {
 
     // test case to visit login page
     it('to login page', () => {
-        cy.get('.btn').contains('Login').should('be.visible').click();
+        cy.get('.btn.btn-primary').contains('Login').should('be.visible').click();
         cy.contains('Welcome').should('exist');
         cy.contains('Login in Book Store').should('exist');
         cy.log('in this stage the intarface is supposed to be in log in page');
@@ -71,7 +72,7 @@ describe('Book Store Test Case', () => {
     it('Login', () => {
         //perform login
         //click login button
-        cy.get('.btn').contains('Login').should('be.visible').click();
+        cy.get('.btn.btn-primary').contains('Login').should('be.visible').click();
         cy.contains('Welcome').should('exist');
         cy.contains('Login in Book Store').should('exist');
         //filling the field
@@ -90,7 +91,7 @@ describe('Book Store Test Case', () => {
         cy.log('Login fail scenario 1: wrong username & password')
         //perform login
         //click login button
-        cy.get('.btn').contains('Login').should('be.visible').click();
+        cy.get('.btn.btn-primary').contains('Login').should('be.visible').click();
         cy.contains('Welcome').should('exist');
         cy.contains('Login in Book Store').should('exist');
         //filling the field
@@ -108,7 +109,7 @@ describe('Book Store Test Case', () => {
         cy.log('Login fail scenario 2: one field is empty')
         //perform login
         //click login button
-        cy.get('.btn').contains('Login').should('be.visible').click();
+        cy.get('.btn.btn-primary').contains('Login').should('be.visible').click();
         cy.contains('Welcome').should('exist');
         cy.contains('Login in Book Store').should('exist');
         //filling the field
@@ -133,7 +134,7 @@ describe('Book Store Test Case', () => {
         cy.log('Login fail scenario 3: both field is empty')
         //perform login
         //click login button
-        cy.get('.btn').contains('Login').should('be.visible').click();
+        cy.get('.btn.btn-primary').contains('Login').should('be.visible').click();
         cy.contains('Welcome').should('exist');
         cy.contains('Login in Book Store').should('exist');
         
@@ -208,6 +209,24 @@ describe('Book Store Test Case', () => {
         cy.get('.btn').contains('Go To Book Store').should('be.visible').click();
         cy.contains('Book Store').should('exist');
         cy.log('in this stage the interface is supposed to be book store page');
+    });
+
+    //from user profile page to Book Store API page
+    it('from user profile page to book store page', () => {
+        //perform login
+        cy.get('.btn').contains('Login').should('be.visible').click();
+        cy.contains('Welcome').should('exist');
+        cy.contains('Login in Book Store').should('exist');
+        cy.get('#userName').type(userDetails.userName);
+        cy.get('#password').type(userDetails.password);
+        cy.get('#login').click();
+        cy.contains('jamesbond27').should('exist');
+
+        cy.get('.btn.btn-light').contains('Book Store API').should('be.visible').click();
+        cy.contains('Book Store API').should('exist');
+        cy.contains('Book Store Web API').should('exist');
+
+        cy.log('at this stage the interface is supposed to be in demoqa.com/swagger book store api testing site');
     });
 
     //test case to Add Books to Collections
@@ -332,27 +351,27 @@ describe('Book Store Test Case', () => {
     });
 
     //test case to delete account
-    // it('Delete Account', () => {
-    //     //perform login
-    //     //click login button
-    //     cy.get('.btn').contains('Login').should('be.visible').click();
-    //     cy.contains('Welcome').should('exist');
-    //     cy.contains('Login in Book Store').should('exist');
-    //     cy.get('#userName').type('yudho');
-    //     cy.get('#password').type('@Yudh122Witanto');
-    //     cy.get('#login').click();
-    //     cy.contains('yudho').should('exist');
+    it('Delete Account', () => {
+        //perform login
+        //click login button
+        cy.get('.btn').contains('Login').should('be.visible').click();
+        cy.contains('Welcome').should('exist');
+        cy.contains('Login in Book Store').should('exist');
+        cy.get('#userName').type('yudho');
+        cy.get('#password').type('@Yudh122Witanto');
+        cy.get('#login').click();
+        cy.contains('yudho').should('exist');
 
-    //     //click delete account button
-    //     cy.get('.btn').contains('Delete Account').should('be.visible').click();
-    //     //click OK button on the modal
-    //     cy.get('.btn').contains('OK').should('be.visible').click();
+        //click delete account button
+        cy.get('.btn').contains('Delete Account').should('be.visible').click();
+        //click OK button on the modal
+        cy.get('.btn').contains('OK').should('be.visible').click();
 
-    //     cy.contains('Welcome').should('exist');
-    //     cy.contains('Login in Book Store').should('exist');
+        cy.contains('Welcome').should('exist');
+        cy.contains('Login in Book Store').should('exist');
 
-    //     cy.log('at this stage the account should be deleted and redirect to login page');
-    // });
+        cy.log('at this stage the account should be deleted and redirect to login page');
+    });
 
     // test case to check row in user profile
     it('Check row in user profile', () => {
@@ -450,6 +469,39 @@ describe('Book Store Test Case', () => {
             });
         });
     });
+
+    // TEST CASE TO VISIT PAGE IN SIDE PANEL
+
+    //visit Login page
+    it('visit login page via side panel', () => {
+        //click login button in the side panel
+        cy.get('.btn.btn-light').contains('Login').should('be.visible').click();
+        //validate that the page is in the login page
+        cy.contains('Welcome,').should('exist');
+        cy.contains('Login in Book Store').should('exist');
+
+        cy.log('at this stage the interface is supposed to be in login page')
+    });
+
+    //visit book store API page
+    it('visit book store API via side panel', () => {
+        //click button in the side panel
+        cy.get('.btn.btn-light').contains('Book Store API').should('be.visible').click();
+        cy.contains('Book Store API').should('exist');
+        cy.contains('Book Store Web API').should('exist');
+
+        cy.log('at this stage the interface is supposed to be in demoqa.com/swagger book store api testing site');
+    });
+
+    //visit profile when not logged in
+    it('visit user profile page when not logged in', () => {
+        //click button in the side panel
+        cy.get('.btn.btn-light').contains('Profile').should('be.visible').click();
+        cy.contains('Currently you are not logged into the Book Store application')
+            .should('exist');
+        
+        cy.log('at this stage the interface is supposed to be in demoqa.com/profile but not logged in');
+    })
 
 });
 
