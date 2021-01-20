@@ -1,7 +1,45 @@
 /// <reference types="cypress" />
 
+// declare variable that contain fixture
+const availableFixtures = [
+    {
+        "name": "searchKeyword",
+        "context": "test search 1"
+    },
+    {
+        "name": "searchKeyword2",
+        "context": "test search 2"
+    },
+    {
+        "name": "searchKeyword3",
+        "context": "test search 3"
+    },
+    {
+        "name": "searchKeyword4",
+        "context": "test search 4 "
+    },
+    {
+        "name": "searchKeyword5",
+        "context": "test search 5"
+    },
+    {
+        "name": "searchKeyword6",
+        "context": "test search 6"
+    },
+    {
+        "name": "searchKeyword7",
+        "context": "test search 7"
+    },
+    {
+        "name": "searchKeyword8",
+        "context": "test search 8"
+    },    
+];
+
 describe('Book Store Test Case', () => {
     let userDetails;
+    let theData;
+
     beforeEach(() => {
         cy.visit('https://demoqa.com/books');
         cy.fixture('userLoginDetails').then((user) => {
@@ -64,7 +102,7 @@ describe('Book Store Test Case', () => {
     // });
 
     //from user profile page to book store page
-    it('from user profile page to book store page', () =>{
+    it('from user profile page to book store page', () => {
         //perform login
         cy.get('.btn').contains('Login').should('be.visible').click();
         cy.contains('Welcome').should('exist');
@@ -202,27 +240,27 @@ describe('Book Store Test Case', () => {
     });
 
     //test case to delete account
-    it('Delete Account', () => {
-        //perform login
-        //click login button
-        cy.get('.btn').contains('Login').should('be.visible').click();
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
-        cy.get('#userName').type('yudho');
-        cy.get('#password').type('@Yudh122Witanto');
-        cy.get('#login').click();
-        cy.contains('yudho').should('exist');
+    // it('Delete Account', () => {
+    //     //perform login
+    //     //click login button
+    //     cy.get('.btn').contains('Login').should('be.visible').click();
+    //     cy.contains('Welcome').should('exist');
+    //     cy.contains('Login in Book Store').should('exist');
+    //     cy.get('#userName').type('yudho');
+    //     cy.get('#password').type('@Yudh122Witanto');
+    //     cy.get('#login').click();
+    //     cy.contains('yudho').should('exist');
 
-        //click delete account button
-        cy.get('.btn').contains('Delete Account').should('be.visible').click();
-        //click OK button on the modal
-        cy.get('.btn').contains('OK').should('be.visible').click();
+    //     //click delete account button
+    //     cy.get('.btn').contains('Delete Account').should('be.visible').click();
+    //     //click OK button on the modal
+    //     cy.get('.btn').contains('OK').should('be.visible').click();
 
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
+    //     cy.contains('Welcome').should('exist');
+    //     cy.contains('Login in Book Store').should('exist');
 
-        cy.log('at this stage the account should be deleted and redirect to login page');
-    });
+    //     cy.log('at this stage the account should be deleted and redirect to login page');
+    // });
 
     // test case to check row in user profile
     it('Check row in user profile', () => {
@@ -268,7 +306,7 @@ describe('Book Store Test Case', () => {
     });
 
     // test case to check row in book store main page
-    it.only('Check row in book store main page', () => {
+    it('Check row in book store main page', () => {
 
         //select row: 5
         cy.get('select').select('5').should('have.value', '5');
@@ -301,7 +339,25 @@ describe('Book Store Test Case', () => {
         cy.get('.ReactTable').children().get('.rt-tbody').find('.rt-tr-group').should('have.length', 100);
     });
 
-  
-
+    //test search field in books store main page
+    //keyword based on book title
     
+    //loop through fixtures
+    availableFixtures.forEach((afixture) => {
+        describe(afixture.context, () => {
+            before(function () {
+                cy.fixture(afixture.name).then(function (data) {
+                    theData = data;
+                });
+            });
+            it('test search', () => {
+                //type search keyword in the search field
+                cy.get('#searchBox').type(theData.searchBox);
+                //match search result
+                cy.contains(theData.searchResult, { matchCase: false }).should('exist');
+            });
+        });
+    });
+
 });
+
