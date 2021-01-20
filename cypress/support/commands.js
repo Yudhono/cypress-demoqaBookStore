@@ -48,7 +48,7 @@ Cypress.Commands.add('postToken', () => {
             password: '@JamesBond27'
         },
         headers: {
-                'content-type': 'application/json'
+            'content-type': 'application/json'
         }
     })
         .its('body')
@@ -68,4 +68,21 @@ Cypress.Commands.add('solveGoogleReCAPTCHA', () => {
                 .should('be.visible')
                 .click();
         });
+});
+
+// custom command to perform login
+Cypress.Commands.add('performLogin', (userName, password) => {
+
+    //perform login
+    //click login button
+    cy.get('.btn.btn-primary').contains('Login').should('be.visible').click();
+    cy.contains('Welcome').should('exist');
+    cy.contains('Login in Book Store').should('exist');
+    //filling the field
+    cy.get('#userName').type(userName);
+    cy.get('#password').type(password);
+
+    //click login button
+    cy.get('.btn.btn-primary').contains('Login').should('be.visible').click();
+
 });

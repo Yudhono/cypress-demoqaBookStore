@@ -69,36 +69,23 @@ describe('Book Store Test Case', () => {
     });
 
     //test case to perform success login
-    it('Login', () => {
-        //perform login
-        //click login button
-        cy.get('.btn.btn-primary').contains('Login').should('be.visible').click();
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
-        //filling the field
-        cy.get('#userName').type(userDetails.userName);
-        cy.get('#password').type(userDetails.password);
-        //click login button
-        cy.get('#login').click();
-        cy.contains(userDetails.userName).should('exist');
+    it('Login success', () => {
+        // function to perform Login
+        // the block code has written in commmand.js
+        cy.performLogin(userDetails.userName, userDetails.password);        
 
-        cy.log('login success, in this stage the interface is supposed to be in demoqa.com/profile page with username on it');
+        cy.contains(userDetails.userName).should('exist');
+        cy.log('login success, in this stage the interface is supposed to be in demoqa.com/books page with username on it');
     });
 
     //test case to perform fail login, scenario 1: wrong username & password
     //loop through fixtures
     it('Test to Fail Login, scenario 1: wrong username & password', () => {
         cy.log('Login fail scenario 1: wrong username & password')
-        //perform login
-        //click login button
-        cy.get('.btn.btn-primary').contains('Login').should('be.visible').click();
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
-        //filling the field
-        cy.get('#userName').type('aaa');
-        cy.get('#password').type('aaa');
-        //click login button
-        cy.get('#login').click();
+        // function to perform Login
+        // the block code has written in commmand.js
+        cy.performLogin('aaa', 'aaa');
+
         cy.contains('Invalid username or password!').should('exist');
 
         cy.log('in this stage the test is supposed to be success to fail');
@@ -167,13 +154,8 @@ describe('Book Store Test Case', () => {
     //test case to perform logout
     it('Logout', () => {
         // perform login
-        cy.get('#login').click();
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
-        cy.get('#userName').type(userDetails.userName);
-        cy.get('#password').type(userDetails.password);
-        cy.get('#login').click();
-        cy.contains('jamesbond27').should('exist');
+        cy.performLogin(userDetails.userName, userDetails.password)
+        cy.contains(userDetails.userName).should('exist');
 
         //perform logout
         cy.get('.btn').contains('Log out').should('be.visible').click();
@@ -194,33 +176,25 @@ describe('Book Store Test Case', () => {
 
     // });
 
-    //from user profile page to book store page
-    it('from user profile page to book store page', () => {
+    //test case to visit from Book store page to user profile page after login
+    it('visit from Book store page to user profile page after login', () => {
         //perform login
-        cy.get('.btn').contains('Login').should('be.visible').click();
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
-        cy.get('#userName').type(userDetails.userName);
-        cy.get('#password').type(userDetails.password);
-        cy.get('#login').click();
-        cy.contains('jamesbond27').should('exist');
+        cy.performLogin(userDetails.userName, userDetails.password)
+        //check the username after login
+        cy.contains(userDetails.userName).should('exist');
 
         //click button to go back to book store page (demoqa.com/book)
-        cy.get('.btn').contains('Go To Book Store').should('be.visible').click();
-        cy.contains('Book Store').should('exist');
-        cy.log('in this stage the interface is supposed to be book store page');
+        cy.get('.btn.btn-light').contains('Profile').should('be.visible').click();
+        cy.contains(userDetails.userName).should('exist');
+        cy.log('in this stage the interface is supposed to be user profile page');
     });
 
-    //from user profile page to Book Store API page
-    it('from user profile page to book store page', () => {
+    //from Book store page to Book Store API page
+    it('from book store page to book store API page', () => {
         //perform login
-        cy.get('.btn').contains('Login').should('be.visible').click();
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
-        cy.get('#userName').type(userDetails.userName);
-        cy.get('#password').type(userDetails.password);
-        cy.get('#login').click();
-        cy.contains('jamesbond27').should('exist');
+        cy.performLogin(userDetails.userName, userDetails.password)
+        //check the username after login
+        cy.contains(userDetails.userName).should('exist');
 
         cy.get('.btn.btn-light').contains('Book Store API').should('be.visible').click();
         cy.contains('Book Store API').should('exist');
@@ -232,18 +206,9 @@ describe('Book Store Test Case', () => {
     //test case to Add Books to Collections
     it('Add Books to collections', () => {
         //perform login
-        cy.get('.btn').contains('Login').should('be.visible').click();
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
-        cy.get('#userName').type(userDetails.userName);
-        cy.get('#password').type(userDetails.password);
-        cy.get('#login').click();
-        cy.contains('jamesbond27').should('exist');
-
-        //click button to go back to book store page (demoqa.com/book)
-        cy.get('.btn').contains('Go To Book Store').should('be.visible').click();
-        cy.contains('Book Store').should('exist');
-        cy.log('in this stage the interface is supposed to be book store page');
+        cy.performLogin(userDetails.userName, userDetails.password)
+        //check the username after login
+        cy.contains(userDetails.userName).should('exist');
 
         //--click book to go to detailed book page--
         //get href link of one book and click it
@@ -295,13 +260,12 @@ describe('Book Store Test Case', () => {
     //test case to delete a book
     it('Delete a Book', () => {
         //perform login
-        cy.get('.btn').contains('Login').should('be.visible').click();
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
-        cy.get('#userName').type(userDetails.userName);
-        cy.get('#password').type(userDetails.password);
-        cy.get('#login').click();
-        cy.contains('jamesbond27').should('exist');
+        cy.performLogin(userDetails.userName, userDetails.password)
+        //check the username after login
+        cy.contains(userDetails.userName).should('exist');
+
+        //go to user profile page
+        cy.get('.btn.btn-light').contains('Profile').should('be.visible').click();
 
         //click trash icon button on the book list
         cy.get('#delete-record-undefined').first().click();
@@ -314,13 +278,13 @@ describe('Book Store Test Case', () => {
     //test case to cancel deletetion of a book
     it('Cancel Deleting a Book', () => {
         //perform login
-        cy.get('.btn').contains('Login').should('be.visible').click();
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
-        cy.get('#userName').type(userDetails.userName);
-        cy.get('#password').type(userDetails.password);
-        cy.get('#login').click();
-        cy.contains('jamesbond27').should('exist');
+        cy.performLogin(userDetails.userName, userDetails.password)
+        //check the username after login
+        cy.contains(userDetails.userName).should('exist');
+
+        //go to user profile page
+        //by clicking profile button in side panel
+        cy.get('.btn.btn-light').contains('Profile').should('be.visible').click();
 
         //click trash icon button on the book list
         cy.get('#delete-record-undefined').first().click();
@@ -333,57 +297,55 @@ describe('Book Store Test Case', () => {
     //test case to delete ALL boooks
     it('Delete All Books', () => {
         //perform login
-        //click login button
-        cy.get('.btn').contains('Login').should('be.visible').click();
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
-        cy.get('#userName').type(userDetails.userName);
-        cy.get('#password').type(userDetails.password);
-        cy.get('#login').click();
-        cy.contains('jamesbond27').should('exist');
+        cy.performLogin(userDetails.userName, userDetails.password)
+        //check the username after login
+        cy.contains(userDetails.userName).should('exist');
+
+        //go to user profile page
+        //by clicking profile button in side panel
+        cy.get('.btn.btn-light').contains('Profile').should('be.visible').click();
 
         //click delete all books button
-        cy.get('.btn').contains('Delete All Books').should('be.visible').click();
+        cy.get('.btn.btn-primary').contains('Delete All Books').should('be.visible').click();
         //click OK button on the modal
-        cy.get('.btn').contains('OK').should('be.visible').click();
+        cy.get('.btn.btn-primary').contains('OK').should('be.visible').click();
 
         cy.log('at this stage the ALL BOOKS must be gone because the user delete it');
     });
 
     //test case to delete account
-    it('Delete Account', () => {
-        //perform login
-        //click login button
-        cy.get('.btn').contains('Login').should('be.visible').click();
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
-        cy.get('#userName').type('yudho');
-        cy.get('#password').type('@Yudh122Witanto');
-        cy.get('#login').click();
-        cy.contains('yudho').should('exist');
+    // it('Delete Account', () => {
+    //     //perform login
+    //     //click login button
+    //     cy.get('.btn').contains('Login').should('be.visible').click();
+    //     cy.contains('Welcome').should('exist');
+    //     cy.contains('Login in Book Store').should('exist');
+    //     cy.get('#userName').type('yudho');
+    //     cy.get('#password').type('@Yudh122Witanto');
+    //     cy.get('#login').click();
+    //     cy.contains('yudho').should('exist');
 
-        //click delete account button
-        cy.get('.btn').contains('Delete Account').should('be.visible').click();
-        //click OK button on the modal
-        cy.get('.btn').contains('OK').should('be.visible').click();
+    //     //click delete account button
+    //     cy.get('.btn').contains('Delete Account').should('be.visible').click();
+    //     //click OK button on the modal
+    //     cy.get('.btn').contains('OK').should('be.visible').click();
 
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
+    //     cy.contains('Welcome').should('exist');
+    //     cy.contains('Login in Book Store').should('exist');
 
-        cy.log('at this stage the account should be deleted and redirect to login page');
-    });
+    //     cy.log('at this stage the account should be deleted and redirect to login page');
+    // });
 
     // test case to check row in user profile
     it('Check row in user profile', () => {
         //perform login
-        //click login button
-        cy.get('.btn').contains('Login').should('be.visible').click();
-        cy.contains('Welcome').should('exist');
-        cy.contains('Login in Book Store').should('exist');
-        cy.get('#userName').type(userDetails.userName);
-        cy.get('#password').type(userDetails.password);
-        cy.get('#login').click();
-        cy.contains('jamesbond27').should('exist');
+        cy.performLogin(userDetails.userName, userDetails.password)
+        //check the username after login
+        cy.contains(userDetails.userName).should('exist');
+
+        //go to user profile page
+        //by clicking profile button in side panel
+        cy.get('.btn.btn-light').contains('Profile').should('be.visible').click();
 
         //select row: 5
         cy.get('select').select('5').should('have.value', '5');
