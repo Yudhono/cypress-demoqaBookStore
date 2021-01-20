@@ -36,9 +36,21 @@ const availableFixtures = [
     },    
 ];
 
+const loginScenarioFixtures = [
+    {
+        "name": "loginScenario1",
+        "context": "scenario 1, wrong user & password"
+    },
+    {
+        "name": "loginScenario2",
+        "context": "scenario 2, one field is empty"
+    }
+];
+
 describe('Book Store Test Case', () => {
     let userDetails;
     let theData;
+    let theDatanya;
 
     beforeEach(() => {
         cy.visit('https://demoqa.com/books');
@@ -47,7 +59,7 @@ describe('Book Store Test Case', () => {
         })
     });
 
-    // test case to visi login page
+    // test case to visit login page
     it('to login page', () => {
         cy.get('.btn').contains('Login').should('be.visible').click();
         cy.contains('Welcome').should('exist');
@@ -55,9 +67,10 @@ describe('Book Store Test Case', () => {
         cy.log('in this stage the intarface is supposed to be in log in page');
     });
 
-    //test case to perform login
+    //test case to perform success login
     it('Login', () => {
         //perform login
+        //click login button
         cy.get('.btn').contains('Login').should('be.visible').click();
         cy.contains('Welcome').should('exist');
         cy.contains('Login in Book Store').should('exist');
@@ -66,10 +79,89 @@ describe('Book Store Test Case', () => {
         cy.get('#password').type(userDetails.password);
         //click login button
         cy.get('#login').click();
-        cy.contains('jamesbond27').should('exist');
+        cy.contains(userDetails.userName).should('exist');
 
-        cy.log('in this stage the interface is supposed to be in demoqa.com/profile page with username on it');
+        cy.log('login success, in this stage the interface is supposed to be in demoqa.com/profile page with username on it');
     });
+
+    //test case to perform fail login, scenario 1: wrong username & password
+    //loop through fixtures
+    it('Test to Fail Login, scenario 1: wrong username & password', () => {
+        cy.log('Login fail scenario 1: wrong username & password')
+        //perform login
+        //click login button
+        cy.get('.btn').contains('Login').should('be.visible').click();
+        cy.contains('Welcome').should('exist');
+        cy.contains('Login in Book Store').should('exist');
+        //filling the field
+        cy.get('#userName').type('aaa');
+        cy.get('#password').type('aaa');
+        //click login button
+        cy.get('#login').click();
+        cy.contains('Invalid username or password!').should('exist');
+
+        cy.log('in this stage the test is supposed to be success to fail');
+    });
+
+    //test case to perform fail login, scenario 2: one field is empty
+    it('Test to Fail Login, scenario 2: one field is empty', () => {
+        cy.log('Login fail scenario 2: one field is empty')
+        //perform login
+        //click login button
+        cy.get('.btn').contains('Login').should('be.visible').click();
+        cy.contains('Welcome').should('exist');
+        cy.contains('Login in Book Store').should('exist');
+        //filling the field
+        cy.get('#password').type('aaa');
+        //click login button
+        cy.get('#login').click();
+        //get username field
+        cy.get('#userForm')
+            .children()
+            .get('#userName-wrapper')
+            .children()
+            .get('.col-md-9.col-sm-12')
+            .children()
+            .get('#userName')
+            .should('have.css', 'border-color', 'rgb(220, 53, 69)');
+
+        cy.log('in this stage the test is supposed to be success to fail');
+    });
+
+    //test case to perform fail login, scenario 3: both field is empty
+    it('Test to Fail Login, scenario 3: both field is empty', ()=> {
+        cy.log('Login fail scenario 3: both field is empty')
+        //perform login
+        //click login button
+        cy.get('.btn').contains('Login').should('be.visible').click();
+        cy.contains('Welcome').should('exist');
+        cy.contains('Login in Book Store').should('exist');
+        
+        //click login button
+        cy.get('#login').click();
+        //get username field
+        cy.get('#userForm')
+            .children()
+            .get('#userName-wrapper')
+            .children()
+            .get('.col-md-9.col-sm-12')
+            .children()
+            .get('#userName')
+            .should('have.css', 'border-color', 'rgb(220, 53, 69)');
+
+        //get password field
+        cy.get('#userForm')
+            .children()
+            .get('#userName-wrapper')
+            .children()
+            .get('.col-md-9.col-sm-12')
+            .children()
+            .get('#password')
+            .should('have.css', 'border-color', 'rgb(220, 53, 69)');
+
+        cy.log('in this stage the test is supposed to be success to fail');
+    });
+
 
     //test case to perform logout
     it('Logout', () => {
