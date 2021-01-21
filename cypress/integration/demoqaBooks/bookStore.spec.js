@@ -4,36 +4,36 @@
 const availableFixtures = [
     {
         "name": "searchKeyword",
-        "context": "test search 1"
+        "context": "test search based on title 1"
     },
     {
         "name": "searchKeyword2",
-        "context": "test search 2"
+        "context": "test search based on title 2"
     },
     {
         "name": "searchKeyword3",
-        "context": "test search 3"
+        "context": "test search based on title  3"
     },
     {
         "name": "searchKeyword4",
-        "context": "test search 4 "
+        "context": "test search based on title 4 "
     },
     {
         "name": "searchKeyword5",
-        "context": "test search 5"
+        "context": "test search based on title 5"
     },
     {
         "name": "searchKeyword6",
-        "context": "test search 6"
+        "context": "test search based on title 6"
     },
     {
         "name": "searchKeyword7",
-        "context": "test search 7"
+        "context": "test search based on title 7"
     },
     {
         "name": "searchKeyword8",
-        "context": "test search 8"
-    },    
+        "context": "test search based on title 8"
+    },
 ];
 
 const loginScenarioFixtures = [
@@ -50,7 +50,19 @@ const loginScenarioFixtures = [
 describe('Book Store Test Case', () => {
     let userDetails;
     let theData;
-    
+    let theDatanya;
+    let datanyaw;
+
+
+    before(function () {
+        cy.fixture('authorSearchKeyword').then(function (data) {
+            theDatanya = data;
+        });
+
+        cy.fixture('publisherSearchKeyword').then(function (data) {
+            datanyaw = data;
+        })
+    });
 
     // in this block, the code is always executed before all is executed
     beforeEach(() => {
@@ -72,7 +84,7 @@ describe('Book Store Test Case', () => {
     it('Login success', () => {
         // function to perform Login
         // the block code has written in commmand.js
-        cy.performLogin(userDetails.userName, userDetails.password);        
+        cy.performLogin(userDetails.userName, userDetails.password);
 
         cy.contains(userDetails.userName).should('exist');
         cy.log('login success, in this stage the interface is supposed to be in demoqa.com/books page with username on it');
@@ -117,14 +129,14 @@ describe('Book Store Test Case', () => {
     });
 
     //test case to perform fail login, scenario 3: both field is empty
-    it('Test to Fail Login, scenario 3: both field is empty', ()=> {
+    it('Test to Fail Login, scenario 3: both field is empty', () => {
         cy.log('Login fail scenario 3: both field is empty')
         //perform login
         //click login button
         cy.get('.btn.btn-primary').contains('Login').should('be.visible').click();
         cy.contains('Welcome').should('exist');
         cy.contains('Login in Book Store').should('exist');
-        
+
         //click login button
         cy.get('#login').click();
         //get username field
@@ -164,7 +176,7 @@ describe('Book Store Test Case', () => {
         cy.log('in this stage the interface is supposed to be in login page');
     });
 
-    // it('create new user', () => {
+    // it.only('create new user', () => {
     //     cy.get('#login').click();
     //     cy.get('#newUser').click();
     //     cy.contains('Register to Book Store').should('exist');        
@@ -175,6 +187,55 @@ describe('Book Store Test Case', () => {
     //     cy.clickRecaptcha();
 
     // });
+
+
+    //test to view detailed book page (not logged in)
+    it('view detailed book page (not logged in)', () => {
+        //--click book to go to detailed book page--
+        //get href link of one book and click it
+        cy.get('span.mr-2').children().get('a[href*="/books?"]').first().click();
+        cy.contains('ISBN').should('exist');
+        cy.contains('Title').should('exist');
+        cy.contains('Sub Title').should('exist');
+        cy.contains('Author').should('exist');
+        cy.contains('Publisher').should('exist');
+        cy.contains('Total Pages').should('exist');
+        cy.contains('Description').should('exist');
+        cy.contains('Website').should('exist');
+
+        //check the length of class fullButton (back to book store and add to your collection button)
+        //when not logged in the button only 1 which is back to book store button
+        //when logged in the button is 2 which is back to book store and add to your collection
+        cy.get('.mt-2.fullButtonWrap.row').children().get('.fullButton').should('have.length', 1);
+
+        cy.log('at this stage the button should only 1, which is back to book store button (not logged in)');
+    });
+
+    //test to view detailed book page (logged in)
+    it('view detailed book page (logged in)', () => {
+        //perform login
+        cy.performLogin(userDetails.userName, userDetails.password);
+        cy.contains(userDetails.userName).should('exist');
+        //--click book to go to detailed book page--
+        //get href link of one book and click it
+        cy.get('span.mr-2').children().get('a[href*="/books?"]').first().click();
+        cy.contains('ISBN').should('exist');
+        cy.contains('Title').should('exist');
+        cy.contains('Sub Title').should('exist');
+        cy.contains('Author').should('exist');
+        cy.contains('Publisher').should('exist');
+        cy.contains('Total Pages').should('exist');
+        cy.contains('Description').should('exist');
+        cy.contains('Website').should('exist');
+
+        //check the length of class fullButton (back to book store and add to your collection button)
+        //when not logged in the button only 1 which is back to book store button
+        //when logged in the button is 2 which is back to book store and add to your collection
+        cy.get('.mt-2.fullButtonWrap.row').children().get('.fullButton').should('have.length', 2);
+
+        cy.log('at this stage the button should 2, which is back to book store button and add to your collection (logged in)');
+    });
+
 
     //test case to visit from Book store page to user profile page after login
     it('visit from Book store page to user profile page after login', () => {
@@ -414,13 +475,13 @@ describe('Book Store Test Case', () => {
 
     //test search field in books store main page
     //keyword based on book title
-    
+
     //loop through fixtures
     availableFixtures.forEach((afixture) => {
         describe(afixture.context, () => {
             before(function () {
-                cy.fixture(afixture.name).then(function (data) {
-                    theData = data;
+                cy.fixture(afixture.name).then(function (dataw) {
+                    theData = dataw;
                 });
             });
             it('test search', () => {
@@ -431,6 +492,59 @@ describe('Book Store Test Case', () => {
             });
         });
     });
+
+    //test search field in book store main page
+    //keyword based on publisher
+    it('test search based on publisher', () => {
+        // type search keyword one in the search field
+        cy.get('#searchBox').type(datanyaw.searchBox[0]);
+        //loop search result and should exist
+        for (var i = 0; i < datanyaw.searchResult.length; i++) {
+            cy.contains(datanyaw.searchResult[i], { matchCase: false }).should('exist');
+        }
+
+        cy.get('#searchBox').clear();
+
+        // type search keyword two in the search field
+        cy.get('#searchBox').type(datanyaw.searchBox[1])
+        
+        for (var j = 0; j < datanyaw.searchResult2.length; j++) {
+            cy.contains(datanyaw.searchResult2[j], { matchCase: false }).should('exist');
+        }
+
+    });
+
+    //test search field in book store main page
+    //keyword based on author
+    it('test search based on author', () => {
+        //type search keyword in the search field
+        for (var i = 0; i < theDatanya.searchBox.length; i++) {
+            cy.get('#searchBox').type(theDatanya.searchBox[i]);
+            
+            //match search result
+            cy.contains(theDatanya.searchResult[i], { matchCase: false }).should('exist');
+            
+            cy.get('#searchBox').clear();
+
+
+        }
+    });
+    // it.only('test author search', () => {
+    //     //type search keyword in the search field
+    //     for (var i = 0; i < theDatanya.searchBox.length; i++) {
+    //         cy.get('#searchBox').type(theDatanya.searchBox[i]);
+    //         cy.log(`i ke ${i}`);
+    //         //match search result
+    //         for (var j = 0; j <theDatanya.searchResult.length; j++) {
+
+    //             cy.contains(theDatanya.searchResult[j], { matchCase: false }).should('exist');
+    //             cy.log(`j ke ${j}`);
+    //             cy.get('#searchBox').clear();
+    //         }
+    //         cy.get('#searchBox').clear();
+
+    //     }
+    // });
 
     // TEST CASE TO VISIT PAGE IN SIDE PANEL
 
@@ -461,7 +575,7 @@ describe('Book Store Test Case', () => {
         cy.get('.btn.btn-light').contains('Profile').should('be.visible').click();
         cy.contains('Currently you are not logged into the Book Store application')
             .should('exist');
-        
+
         cy.log('at this stage the interface is supposed to be in demoqa.com/profile but not logged in');
     })
 
